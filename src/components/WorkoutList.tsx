@@ -53,11 +53,14 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh, onE
       return;
     }
 
+    const load = editingData.load && editingData.load !== 0 ? editingData.load : undefined;
+    const unit = load ? editingData.unit : undefined;
+
     onEdit(editingData.id, {
       name: trimmedName,
       reps: editingData.reps,
-      load: editingData.load,
-      unit: editingData.unit,
+      load,
+      unit,
     });
     onRefresh();
     cancelEditing();
