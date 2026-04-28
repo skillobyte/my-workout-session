@@ -1,0 +1,172 @@
+.add-exercise {
+  margin-bottom: 16px;
+}
+
+.add-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #3a5175;
+  color: white;
+  border: 1px solid #3a5175;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.add-btn:active {
+  background-color: #0284c7;
+  border-color: #0284c7;
+  opacity: 0.9;
+}
+
+.exercise-form {
+  background-color: #000000;
+  padding: 16px;
+  border: 2px solid #3a4f72;
+  border-radius: 4px;
+}
+
+.exercise-form h3 {
+  margin: 0 0 14px 0;
+  color: #3a4f72;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.form-group {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #3a4f72;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px;
+  border: 1px solid #3a5175;
+  border-radius: 0;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  background-color: #000;
+  color:#3a5175;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #0369a1;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.submit-btn {
+  flex: 1;
+  padding: 10px 12px;
+  background-color: #3a5175;
+  color: white;
+  border: 1px solid #3a5175;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.submit-btn:active {
+  background-color: #0284c7;
+  border-color: #0284c7;
+}
+
+.cancel-btn {
+  flex: 1;
+  padding: 10px 12px;
+  background-color: #3a5175;
+  color: #fff;
+  border: 1px solid #3a5175;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.cancel-btn:active {
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+/* TABLET: iPad */
+@media (min-width: 768px) {
+  .add-btn {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+
+  .exercise-form {
+    padding: 20px;
+  }
+
+  .exercise-form h3 {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .form-row {
+    gap: 14px;
+  }
+
+  .form-actions {
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    padding: 12px;
+    font-size: 13px;
+  }
+}

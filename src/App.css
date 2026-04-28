@@ -1,0 +1,148 @@
+* {
+  box-sizing: border-box;
+}
+
+/* MOBILE-FIRST: iPhone 13 Base Styles */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #000000;
+  color: #3a5175;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.app-header {
+  /*background-color: #fff;*/
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid #3a5175;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+
+.app-header h1 {
+  color: #0369a1;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.app-main {
+  flex: 1;
+  padding: 12px 16px 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.day-selector {
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 0;
+}
+
+.day-selector h3 {
+  margin: 0 0 10px 0;
+  color: #3a5175;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.day-buttons {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day-btn {
+  padding: 8px 4px;
+  border: 1px solid #3a5175;
+  background-color: #000;
+  color: #3a5175;
+  border-radius: 2px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 11px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.day-btn:active {
+  border-color: #3a5175;
+  background-color: #f0f9ff;
+  color: #3a5175;
+}
+
+.day-btn.active {
+  background-color: #3a5175;
+  color: white;
+  border-color: #3a5175;
+}
+
+/* TABLET: iPad and larger tablets */
+@media (min-width: 768px) {
+  .app-header {
+    padding: 20px 24px;
+  }
+
+  .app-main {
+    padding: 24px;
+    /*max-width: 600px;
+    margin: 0 auto;*/
+  }
+
+  .day-selector {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .day-selector h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .day-buttons {
+    gap: 8px;
+  }
+
+  .day-btn {
+    padding: 10px 6px;
+    font-size: 12px;
+  }
+
+  .app-header h1 {
+    font-size: 24px;
+  }
+}
+
+/* DESKTOP: Larger screens */
+@media (min-width: 1024px) {
+  .app-main {
+    /*max-width: 700px;*/
+    padding: 32px;
+  }
+
+  .day-selector {
+    padding: 20px;
+    margin-bottom: 32px;
+  }
+
+  .app-header {
+    padding: 24px 32px;
+  }
+
+  .app-header h1 {
+    font-size: 28px;
+  }
+}
