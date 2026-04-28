@@ -104,6 +104,8 @@ export function AddExercise({ day, onAdd }: AddExerciseProps) {
                   <option value="lbs">lbs</option>
                   <option value="m">m</option>
                   <option value="km">km</option>
+                  <option value="sec">sec</option>
+                  <option value="min">min</option>
                 </select>
               </div>
             )}
