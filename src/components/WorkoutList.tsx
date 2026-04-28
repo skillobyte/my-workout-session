@@ -197,6 +197,7 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh, onE
                                 }}
                                 onDoubleClick={(e) => e.stopPropagation()}
                               >
+                                <option value="">Unit</option>
                                 {UNIT_OPTIONS.map(unit => (
                                   <option key={unit} value={unit}>{unit}</option>
                                 ))}
@@ -311,6 +312,7 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh, onE
                                 }}
                                 onDoubleClick={(e) => e.stopPropagation()}
                               >
+                                <option value="">Unit</option>
                                 {UNIT_OPTIONS.map(unit => (
                                   <option key={unit} value={unit}>{unit}</option>
                                 ))}
