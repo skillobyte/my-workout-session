@@ -27,6 +27,16 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh }: W
               <div className="exercises-list">
                 {pendingExercises.map(exercise => (
                   <div key={exercise.id} className="exercise-item pending">
+                    <button
+                      onClick={() => {
+                        onDelete(exercise.id);
+                        onRefresh();
+                      }}
+                      className="delete-btn"
+                      aria-label={`Delete ${exercise.name}`}
+                    >
+                      🗑️
+                    </button>
                     <div className="exercise-content">
                       <input
                         type="checkbox"
@@ -46,16 +56,6 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh }: W
                         </p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        onDelete(exercise.id);
-                        onRefresh();
-                      }}
-                      className="delete-btn"
-                      aria-label={`Delete ${exercise.name}`}
-                    >
-                      ✕
-                    </button>
                   </div>
                 ))}
               </div>
@@ -68,6 +68,16 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh }: W
               <div className="exercises-list">
                 {completedExercises.map(exercise => (
                   <div key={exercise.id} className="exercise-item completed">
+                    <button
+                      onClick={() => {
+                        onDelete(exercise.id);
+                        onRefresh();
+                      }}
+                      className="delete-btn"
+                      aria-label={`Delete ${exercise.name}`}
+                    >
+                      🗑️
+                    </button>
                     <div className="exercise-content">
                       <input
                         type="checkbox"
@@ -86,17 +96,7 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh }: W
                           {exercise.load && ` • ${exercise.load}${exercise.unit || 'kg'}`}
                         </p>
                       </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        onDelete(exercise.id);
-                        onRefresh();
-                      }}
-                      className="delete-btn"
-                      aria-label={`Delete ${exercise.name}`}
-                    >
-                      ✕
-                    </button>
+                    </div>                    
                   </div>
                 ))}
               </div>
