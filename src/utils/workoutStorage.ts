@@ -67,6 +67,13 @@ export const workoutStorage = {
     }
   },
 
+  // Reorder exercises
+  reorderExercises: (day: string, reorderedExercises: Exercise[]) => {
+    const allWorkouts = workoutStorage.getAllWorkouts();
+    allWorkouts[day] = reorderedExercises;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allWorkouts));
+  },
+
   // Export workouts as JSON
   exportWorkouts: (): string => {
     const allWorkouts = workoutStorage.getAllWorkouts();

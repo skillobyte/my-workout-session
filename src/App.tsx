@@ -38,6 +38,16 @@ function App() {
     }
   }
 
+  const handleEditExercise = (exerciseId: string, updates: Partial<Exercise>) => {
+    workoutStorage.updateExercise(currentDay, exerciseId, updates)
+    loadWorkouts()
+  }
+
+  const handleReorderExercises = (day: string, reorderedExercises: Exercise[]) => {
+    workoutStorage.reorderExercises(day, reorderedExercises)
+    loadWorkouts()
+  }
+
   const handleImportSuccess = () => {
     loadWorkouts()
     setRefreshKey(prev => prev + 1)
@@ -78,6 +88,8 @@ function App() {
           onToggle={handleToggleExercise}
           onDelete={handleDeleteExercise}
           onRefresh={handleRefresh}
+          onEdit={handleEditExercise}
+          onReorder={handleReorderExercises}
         />
       </main>
     </div>
