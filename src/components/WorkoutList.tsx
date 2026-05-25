@@ -29,6 +29,9 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh, onE
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const draggedIdRef = useRef<string | null>(null);
+  const dragOverIdRef = useRef<string | null>(null);
+  const editingId = editingData?.id;
 
   const startEditing = (exercise: Exercise) => {
     setEditingData({
@@ -67,41 +70,62 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh, onE
   };
 
   useEffect(() => {
-    if (editingData && nameInputRef.current) {
+    if (editingId && nameInputRef.current) {
       nameInputRef.current.focus();
       nameInputRef.current.select();
     }
-  }, [editingData?.id]);
+  }, [editingId]);
 
-  const handleDragStart = (e: React.DragEvent, exerciseId: string) => {
-    setDraggedId(exerciseId);
-    e.dataTransfer.effectAllowed = 'move';
-  };
-
-  const handleDragOver = (e: React.DragEvent, exerciseId: string) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+  const updateDragOverId = (exerciseId: string | null) => {
+    dragOverIdRef.current = exerciseId;
     setDragOverId(exerciseId);
   };
 
-  const handleDragLeave = () => {
+  const resetDragState = () => {
+    draggedIdRef.current = null;
+    dragOverIdRef.current = null;
+    setDraggedId(null);
     setDragOverId(null);
   };
 
-  const handleDrop = (e: React.DragEvent, targetId: string) => {
-    e.preventDefault();
-    if (!draggedId || draggedId === targetId) {
-      setDraggedId(null);
-      setDragOverId(null);
+  const getExerciseIdAtPoint = (clientX: number, clientY: number): string | null => {
+    const element = document.elementFromPoint(clientX, clientY);
+    const item = element?.closest<HTMLElement>('[data-exercise-id]');
+    return item?.dataset.exerciseId || null;
+  };
+
+  const scrollWhileDragging = (clientY: number) => {
+    const scrollContainer = document.querySelector<HTMLElement>('.app-main');
+    if (!scrollContainer) return;
+
+    const rect = scrollContainer.getBoundingClientRect();
+    const edgeSize = 72;
+    const maxStep = 14;
+    let scrollStep = 0;
+
+    if (clientY < rect.top + edgeSize) {
+      scrollStep = -Math.ceil(((rect.top + edgeSize - clientY) / edgeSize) * maxStep);
+    }
+
+    if (clientY > rect.bottom - edgeSize) {
+      scrollStep = Math.ceil(((clientY - (rect.bottom - edgeSize)) / edgeSize) * maxStep);
+    }
+
+    if (scrollStep !== 0) {
+      scrollContainer.scrollTop += scrollStep;
+    }
+  };
+
+  const reorderDraggedExercise = (targetId: string) => {
+    const activeDraggedId = draggedIdRef.current;
+    if (!activeDraggedId || activeDraggedId === targetId) {
       return;
     }
 
-    const draggedIndex = exercises.findIndex(ex => ex.id === draggedId);
+    const draggedIndex = exercises.findIndex(ex => ex.id === activeDraggedId);
     const targetIndex = exercises.findIndex(ex => ex.id === targetId);
 
     if (draggedIndex === -1 || targetIndex === -1) {
-      setDraggedId(null);
-      setDragOverId(null);
       return;
     }
 
@@ -110,8 +134,54 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh, onE
     reordered.splice(targetIndex, 0, removed);
 
     onReorder(day, reordered);
-    setDraggedId(null);
-    setDragOverId(null);
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>, exerciseId: string) => {
+    if (editingData || (e.pointerType === 'mouse' && e.button !== 0)) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    draggedIdRef.current = exerciseId;
+    setDraggedId(exerciseId);
+    updateDragOverId(null);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!draggedIdRef.current) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+    scrollWhileDragging(e.clientY);
+
+    const targetId = getExerciseIdAtPoint(e.clientX, e.clientY);
+    if (targetId && targetId !== draggedIdRef.current && targetId !== dragOverIdRef.current) {
+      updateDragOverId(targetId);
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!draggedIdRef.current) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const targetId = getExerciseIdAtPoint(e.clientX, e.clientY) || dragOverIdRef.current;
+    if (targetId) {
+      reorderDraggedExercise(targetId);
+    }
+
+    resetDragState();
+  };
+
+  const handlePointerCancel = () => {
+    resetDragState();
   };
 
   return (
@@ -129,15 +199,22 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh, onE
                 {pendingExercises.map(exercise => (
                   <div 
                     key={exercise.id} 
+                    data-exercise-id={exercise.id}
                     className={`exercise-item pending ${dragOverId === exercise.id ? 'drag-over' : ''} ${draggedId === exercise.id ? 'dragging' : ''}`}
                     onDoubleClick={() => !editingData && startEditing(exercise)}
-                    draggable={!editingData}
-                    onDragStart={(e) => handleDragStart(e, exercise.id)}
-                    onDragOver={(e) => handleDragOver(e, exercise.id)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={(e) => handleDrop(e, exercise.id)}
                   >
                     <div className="exercise-content">
+                      <button
+                        type="button"
+                        className="drag-handle"
+                        aria-label={`Reorder ${exercise.name}`}
+                        disabled={!!editingData}
+                        onPointerDown={(e) => handlePointerDown(e, exercise.id)}
+                        onPointerMove={handlePointerMove}
+                        onPointerUp={handlePointerUp}
+                        onPointerCancel={handlePointerCancel}
+                        onDoubleClick={(e) => e.stopPropagation()}
+                      />
                       <input
                         type="checkbox"
                         checked={exercise.done}
@@ -244,15 +321,22 @@ export function WorkoutList({ day, exercises, onToggle, onDelete, onRefresh, onE
                 {completedExercises.map(exercise => (
                   <div 
                     key={exercise.id} 
+                    data-exercise-id={exercise.id}
                     className={`exercise-item completed ${dragOverId === exercise.id ? 'drag-over' : ''} ${draggedId === exercise.id ? 'dragging' : ''}`}
                     onDoubleClick={() => !editingData && startEditing(exercise)}
-                    draggable={!editingData}
-                    onDragStart={(e) => handleDragStart(e, exercise.id)}
-                    onDragOver={(e) => handleDragOver(e, exercise.id)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={(e) => handleDrop(e, exercise.id)}
                   >
                     <div className="exercise-content">
+                      <button
+                        type="button"
+                        className="drag-handle"
+                        aria-label={`Reorder ${exercise.name}`}
+                        disabled={!!editingData}
+                        onPointerDown={(e) => handlePointerDown(e, exercise.id)}
+                        onPointerMove={handlePointerMove}
+                        onPointerUp={handlePointerUp}
+                        onPointerCancel={handlePointerCancel}
+                        onDoubleClick={(e) => e.stopPropagation()}
+                      />
                       <input
                         type="checkbox"
                         checked={exercise.done}

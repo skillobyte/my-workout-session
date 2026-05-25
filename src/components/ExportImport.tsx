@@ -23,13 +23,20 @@ export function ExportImport({ onImportSuccess }: ExportImportProps) {
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
     const file = event.target.files?.[0];
     if (!file) return;
 
+    setImporting(true);
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const content = e.target?.result as string;
+        const content = e.target?.result;
+        if (typeof content !== 'string') {
+          alert('❌ Error reading file. Make sure it\'s a valid JSON file.');
+          return;
+        }
+
         const result = workoutStorage.importWorkouts(content);
         
         if (result.success) {
@@ -38,13 +45,19 @@ export function ExportImport({ onImportSuccess }: ExportImportProps) {
         } else {
           alert(`❌ Error: ${result.error}`);
         }
-      } catch (error) {
+      } catch {
         alert('❌ Error reading file. Make sure it\'s a valid JSON file.');
       }
     };
+    reader.onerror = () => {
+      alert('❌ Error reading file. Make sure it\'s a valid JSON file.');
+    };
+    reader.onloadend = () => {
+      setImporting(false);
+      setShowMenu(false);
+      input.value = '';
+    };
     reader.readAsText(file);
-    setImporting(false);
-    setShowMenu(false);
   };
 
   const handleClearAll = () => {

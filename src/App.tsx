@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { WorkoutList } from './components/WorkoutList'
 import { AddExercise } from './components/AddExercise'
 import { ExportImport } from './components/ExportImport'
@@ -7,18 +7,18 @@ import type { Exercise } from './types/workout'
 import './App.css'
 
 function App() {
-  const [currentDay, setCurrentDay] = useState<string>(getCurrentDay())
-  const [exercises, setExercises] = useState<Exercise[]>([])
-  const [refreshKey, setRefreshKey] = useState(0)
+  const initialDay = getCurrentDay()
+  const [currentDay, setCurrentDay] = useState<string>(initialDay)
+  const [exercises, setExercises] = useState<Exercise[]>(() => workoutStorage.openDay(initialDay))
 
-  // Load workouts for current day
-  useEffect(() => {
-    loadWorkouts()
-  }, [currentDay, refreshKey])
-
-  const loadWorkouts = () => {
-    const dayWorkouts = workoutStorage.getWorkoutsByDay(currentDay)
+  const loadWorkouts = useCallback((day = currentDay, trackOpen = false) => {
+    const dayWorkouts = trackOpen ? workoutStorage.openDay(day) : workoutStorage.getWorkoutsByDay(day)
     setExercises(dayWorkouts)
+  }, [currentDay])
+
+  const handleDayChange = (day: string) => {
+    setCurrentDay(day)
+    loadWorkouts(day, true)
   }
 
   const handleAddExercise = (exerciseData: { name: string; reps: number; load?: number; unit?: string }) => {
@@ -49,12 +49,11 @@ function App() {
   }
 
   const handleImportSuccess = () => {
-    loadWorkouts()
-    setRefreshKey(prev => prev + 1)
+    loadWorkouts(currentDay, true)
   }
 
   const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1)
+    loadWorkouts()
   }
 
   return (
@@ -73,7 +72,7 @@ function App() {
               <button
                 key={day}
                 className={`day-btn ${currentDay === day ? 'active' : ''}`}
-                onClick={() => setCurrentDay(day)}
+                onClick={() => handleDayChange(day)}
               >
                 {day.slice(0, 3)}
               </button>
