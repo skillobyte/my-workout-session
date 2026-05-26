@@ -1,6 +1,6 @@
 {
   "name": "My Workout Session",
-  "short_name": "Workout",
+  "short_name": "Workout Session",
   "start_url": "/my-workout-session/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
